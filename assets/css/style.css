@@ -329,6 +329,14 @@ p { margin: 0; }
 .js [data-fade] { opacity: 0; transform: translateY(24px); transition: opacity 0.9s ease, transform 1.1s var(--ease); }
 .js [data-fade].is-in { opacity: 1; transform: none; }
 
+/* Phone-only pieces (hidden on larger screens) --------------------------- */
+.svc__thumb, .quick, .mobile-bar { display: none; }
+.button--outline { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+.button--outline:hover { background: var(--ink); color: var(--bg); }
+.gallery__more { display: flex; margin: 32px auto 0; }
+.gallery__more[hidden] { display: none; }
+.tile.is-collapsed { display: none; }
+
 /* Responsive ------------------------------------------------------------- */
 @media (max-width: 1000px) {
   .nav { display: none; }
@@ -339,35 +347,133 @@ p { margin: 0; }
   .clients { grid-template-columns: 1fr; gap: 16px; }
 }
 
+/* Phones */
 @media (max-width: 760px) {
-  :root { --header-h: 68px; }
-  body { font-size: 16px; }
-  .brand img { width: 28px; }
-  .brand span { font-size: 16px; }
-  .brand small { font-size: 10px; }
-  .hero__frame { aspect-ratio: 4 / 5; max-height: none; }
-  .cat, .cat--flip, .person, .person--flip, .contact__grid { grid-template-columns: 1fr; }
-  .cat--flip .cat__images, .person--flip .person__photo { order: 0; }
-  .cat__small { right: 0; width: 34%; border-width: 6px; }
+  :root { --header-h: 64px; --gutter: 20px; }
+  body { font-size: 16px; line-height: 1.6; }
+
+  /* Header: bigger tap areas */
+  .header__inner { gap: 12px; }
+  .brand { gap: 10px; min-height: 44px; }
+  .brand img { width: 26px; }
+  .brand span { font-size: 15px; letter-spacing: 0.1em; gap: 4px; }
+  .brand small { font-size: 9.5px; letter-spacing: 0.28em; }
+  .menu-toggle { min-height: 44px; min-width: 44px; padding: 0 0 0 12px; font-size: 13px; }
+  .mobile-menu { overflow-y: auto; padding-bottom: calc(32px + env(safe-area-inset-bottom)); }
+  .mobile-menu nav a { font-size: 38px; padding: 10px 0; }
+  .mobile-menu p a { display: inline-block; padding: 10px 0; }
+
+  /* Larger hit areas for inline links without changing how they look */
+  .text-link { padding: 15px 0 4px; }
+  .hero__dots button { width: 32px; height: 44px; }
+  .hero__dots button::before { top: 21px; }
+
+  /* Section rhythm */
+  .hero { padding-top: calc(var(--header-h) + 28px); }
+  .hero__title { font-size: clamp(34px, 9.6vw, 44px); line-height: 1.08; }
+  .hero__text { gap: 20px; margin-bottom: 28px; }
+  .hero__aside { gap: 10px; padding-bottom: 0; }
+  .hero__frame { aspect-ratio: 4 / 5; max-height: 72svh; }
+  .hero__meta { padding-top: 4px; }
+
+  .clients { padding-top: 56px; padding-bottom: 56px; }
+  .clients__list { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; font-size: 20px; line-height: 1.3; }
+  .clients__list li { white-space: normal; }
+  .clients__list li:not(:last-child)::after { content: none; }
+
+  .work { padding-top: 56px; }
+  .work .section-title, .about .section-title { margin-bottom: 32px; }
+  .section-title { font-size: 40px; }
+  .cat, .cat--flip { grid-template-columns: 1fr; gap: 20px; margin-bottom: 64px; }
+  .cat--flip .cat__images { order: 0; }
+  .cat__images { padding-bottom: 18%; }
+  .cat__small { right: 0; width: 34%; border-width: 5px; }
   .cat--flip .cat__small { left: auto; right: 0; }
-  .person__photo { aspect-ratio: 1 / 1; }
-  .bts { grid-template-columns: 1fr 1fr; }
-  .bts figure:first-child { grid-column: 1 / -1; }
+  .cat__text { gap: 10px; }
+  .cat__text h3 { font-size: 36px; }
+
+  .gallery { padding: 56px 0; }
+  .gallery__head { gap: 16px; margin-bottom: 20px; }
+  .filters {
+    flex-wrap: nowrap; overflow-x: auto; gap: 0 22px; margin: 0 calc(var(--gutter) * -1); padding: 0 var(--gutter);
+    scrollbar-width: none; -webkit-overflow-scrolling: touch;
+    mask-image: linear-gradient(90deg, #000 85%, transparent); -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent);
+  }
+  .filters::-webkit-scrollbar { display: none; }
+  .filter { flex: none; min-height: 44px; }
   .masonry { columns: 2; column-gap: 8px; }
   .tile { margin-bottom: 8px; }
   .tile figcaption { display: none; }
-  .filters { flex-wrap: nowrap; overflow-x: auto; margin: 0 calc(var(--gutter) * -1); padding: 0 var(--gutter); scrollbar-width: none; }
-  .filters::-webkit-scrollbar { display: none; }
-  .filter { flex: none; }
-  .field-row { grid-template-columns: 1fr; }
-  .contact__list { grid-template-columns: 1fr; gap: 4px; }
-  .contact__list dd { margin-bottom: 16px; }
-  .footer__inner { grid-template-columns: 1fr; align-items: start; }
+  .gallery__more { width: 100%; margin-top: 16px; }
+
+  .services { padding: 64px 0; }
+  .svc { grid-template-columns: 32px 1fr 64px; gap: 2px 12px; padding: 18px 0; }
+  .svc::before { padding-top: 8px; }
+  .svc h3 { font-size: 28px; grid-column: 2; }
+  .svc p { grid-column: 2; font-size: 15px; }
+  .svc__thumb { display: block; grid-column: 3; grid-row: 1 / 3; width: 64px; height: 64px; object-fit: cover; align-self: start; margin-top: 6px; }
+
+  .bleed { height: 62svh; min-height: 320px; }
+
+  .about { padding: 64px 0 56px; }
+  .person, .person--flip { grid-template-columns: 1fr; gap: 24px; margin-bottom: 56px; }
+  .person--flip .person__photo { order: 0; }
+  .person__photo { aspect-ratio: 1 / 1; }
+  .person__body h3 { font-size: 38px; }
+  .person__role { margin: 10px 0 18px; font-size: 13px; }
+  .bts { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .bts figure:first-child { grid-column: 1 / -1; }
+
+  .contact { padding: 64px 0 72px; }
+  .contact__grid { grid-template-columns: 1fr; gap: 48px; }
+  .contact__lede { margin: 16px 0 24px; font-size: 24px; }
+  .quick { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 36px; }
+  .quick .button { padding: 0 12px; }
+  .contact__list { grid-template-columns: 1fr; gap: 2px; }
+  .contact__list dd { margin-bottom: 18px; font-size: 17px; }
+  .contact__list dd a { display: inline-block; padding: 8px 0; }
+  .form { gap: 22px; }
+  .field-row { grid-template-columns: 1fr; gap: 22px; }
+  .field input, .field select { min-height: 44px; }
+  .form .button { width: 100%; justify-self: stretch; }
+
+  .footer { padding: 48px 0 calc(96px + env(safe-area-inset-bottom)); }
+  .footer__inner { grid-template-columns: 1fr; align-items: start; gap: 16px; }
+  .footer__inner img { width: 80px; }
+
   .lightbox { grid-template-columns: 1fr; }
-  .lightbox__figure { padding: 72px 8px 96px; }
-  .lightbox__nav { position: absolute; bottom: 24px; }
+  .lightbox__close { top: calc(12px + env(safe-area-inset-top)); min-height: 44px; }
+  .lightbox__figure { padding: 64px 0 calc(96px + env(safe-area-inset-bottom)); }
+  .lightbox__figure img { max-height: calc(100svh - 190px); }
+  .lightbox figcaption { padding: 0 var(--gutter); }
+  .lightbox__nav { position: absolute; bottom: calc(20px + env(safe-area-inset-bottom)); }
   .lightbox__nav--prev { left: calc(50% - 72px); }
   .lightbox__nav--next { right: calc(50% - 72px); }
+
+  /* Call / WhatsApp bar, shown after the hero */
+  .mobile-bar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 45;
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border-top: 1px solid var(--line);
+    padding-bottom: env(safe-area-inset-bottom);
+    transform: translateY(100%); transition: transform 0.35s var(--ease);
+  }
+  .mobile-bar.is-on { transform: none; }
+  .mobile-bar a {
+    min-height: 54px; display: flex; align-items: center; justify-content: center;
+    font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase;
+  }
+  .mobile-bar a + a { border-left: 1px solid var(--line); }
+  .mobile-bar a:last-child { background: var(--ink); color: var(--bg); }
+}
+
+/* Phones held sideways: keep the hero photo inside the screen */
+@media (max-width: 960px) and (orientation: landscape) and (max-height: 500px) {
+  .hero__frame { aspect-ratio: 16 / 9; max-height: 80svh; }
+  .mobile-menu nav a { font-size: 28px; padding: 4px 0; }
+  .services__sticky { top: calc(var(--header-h) + 12px); }
 }
 
 @media (prefers-reduced-motion: reduce) {

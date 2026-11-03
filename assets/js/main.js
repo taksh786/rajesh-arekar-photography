@@ -37,7 +37,10 @@
     scrollToTarget(target);
   });
 
-  /* ------------------------------------------------------------ Header */
+  /* ------------------------------------------------------------ Header + phone call bar */
+  const mobileBar = $('[data-mobile-bar]');
+  const heroFrame = $('[data-hero]');
+  const contactSec = $('#contact');
   let lastY = window.scrollY;
   const onScroll = () => {
     const y = window.scrollY;
@@ -45,6 +48,10 @@
     if (!document.body.classList.contains('menu-open')) {
       header.classList.toggle('is-hidden', y > lastY && y > 600);
     }
+    // Call bar: after the hero photo, and out of the way once the contact section is on screen
+    const pastHero = heroFrame.getBoundingClientRect().bottom < 0;
+    const atContact = contactSec.getBoundingClientRect().top < window.innerHeight * 0.85;
+    mobileBar.classList.toggle('is-on', pastHero && !atContact && !document.body.classList.contains('menu-open'));
     lastY = y;
   };
   if (lenis) lenis.on('scroll', onScroll); else window.addEventListener('scroll', onScroll, { passive: true });
@@ -61,6 +68,7 @@
     toggle.setAttribute('aria-label', 'Open menu');
     menu.setAttribute('aria-hidden', 'true');
     lenis?.start();
+    onScroll();
   }
   toggle.addEventListener('click', () => {
     if (document.body.classList.contains('menu-open')) return closeMenu();
@@ -71,6 +79,7 @@
     toggle.setAttribute('aria-label', 'Close menu');
     menu.setAttribute('aria-hidden', 'false');
     lenis?.stop();
+    onScroll();
   });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
 
@@ -175,6 +184,27 @@
       if (img.complete && img.naturalWidth) done(); else img.addEventListener('load', done, { once: true });
     });
   }
+  // On phones the full gallery is ~20 screens long, so show a first set and let people ask for the rest
+  const phone = window.matchMedia('(max-width: 760px)');
+  const PHONE_LIMIT = 12;
+  const moreBtn = $('[data-gallery-more]');
+  let expanded = false;
+  const collapse = () => {
+    const visible = tiles.filter(t => !t.classList.contains('is-hidden'));
+    const limit = phone.matches && !expanded ? PHONE_LIMIT : Infinity;
+    visible.forEach((t, i) => t.classList.toggle('is-collapsed', i >= limit));
+    tiles.filter(t => t.classList.contains('is-hidden')).forEach(t => t.classList.remove('is-collapsed'));
+    const extra = visible.length - PHONE_LIMIT;
+    moreBtn.hidden = !(phone.matches && !expanded && extra > 0);
+    moreBtn.textContent = `Show all ${visible.length} photographs`;
+  };
+  moreBtn.addEventListener('click', () => {
+    expanded = true;
+    collapse();
+    if (hasGsap) ScrollTrigger.refresh();
+  });
+  phone.addEventListener('change', collapse);
+
   const applyFilter = cat => {
     filters.forEach(f => {
       const on = f.dataset.filter === cat;
@@ -182,9 +212,15 @@
       f.setAttribute('aria-selected', on);
     });
     tiles.forEach(t => t.classList.toggle('is-hidden', !(cat === 'all' || t.dataset.cat === cat)));
+    expanded = false;
+    collapse();
     if (hasGsap) ScrollTrigger.refresh();
   };
-  filters.forEach(f => f.addEventListener('click', () => applyFilter(f.dataset.filter)));
+  collapse();
+  filters.forEach(f => f.addEventListener('click', () => {
+    applyFilter(f.dataset.filter);
+    if (phone.matches) f.parentElement.scrollTo({ left: f.offsetLeft - f.parentElement.clientWidth / 2 + f.offsetWidth / 2, behavior: reduced ? 'auto' : 'smooth' });
+  }));
   $$('[data-filter-jump]').forEach(b => b.addEventListener('click', () => {
     applyFilter(b.dataset.filterJump);
     scrollToTarget($('#gallery'));
